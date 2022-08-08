@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, RoundButton, RegionModal } from '@/components';
+import { Checkbox, RoundButton, RegionModal, Label, Input } from '@/components';
 import { useNavigate } from 'react-router-dom';
 
 import { ChangeEventType } from '@/@types/react';
@@ -21,6 +21,7 @@ import useApplyUserModel from '@/api/models/useApplyUserModel';
 import { ContentType, ContentTypeEnum, InputNameEnum } from '@/@types/enum';
 import moveScroll from '@/utils/moveScroll';
 import Agreement from '@/components/Modal/Agreement';
+import { REGEX_FOR_VALIDATION } from '@/constants/validation';
 
 const ApplyPage = () => {
   const { postUser } = useApplyUserModel();
@@ -32,12 +33,17 @@ const ApplyPage = () => {
   const [applicantValidation, setApplicantValidation] = useRecoilState(
     applicantValidationState
   );
-  const { city, district } = applicantInfo.region;
+
   const [isAgreements, setIsAgreements] = useState<boolean[]>([false, false]);
   const [isAllPassValidation, setIsAllPassValidation] =
     useState<boolean>(false);
 
-  const { inputAttrs } = useApplicant();
+  const [inputs, setInputs] = useState({
+    name: '',
+    birth: '',
+    phone: '',
+    email: '',
+  });
 
   const handleClickedRegion = () => {
     setShowModal(true);
@@ -62,13 +68,6 @@ const ApplyPage = () => {
     });
   };
 
-  const handleChangeGender = (event: ChangeEventType<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setApplicantInfo({ ...applicantInfo, [name]: value });
-    !applicantValidation[name] &&
-      setApplicantValidation({ ...applicantValidation, [name]: true });
-  };
-
   const handleChangeEachAgreement = (
     event: ChangeEventType<HTMLInputElement>
   ) => {
@@ -85,83 +84,57 @@ const ApplyPage = () => {
     setContentType(type[index]);
     setIsAgreement(true);
   };
+
   const closeAgreementModal = () => {
     setIsAgreement(false);
   };
 
-  useEffect(() => {
-    if (
-      Object.keys(InputNameEnum).length !==
-      Object.keys(applicantValidation).length
-    )
-      return;
-
-    const isValidation = Object.values(applicantValidation).every(
-      (validation) => validation === true
-    );
-
-    const isAgreement = isAgreements.every((agreement) => agreement === true);
-
-    setIsAllPassValidation(isValidation && isAgreement);
-  }, [applicantValidation, isAgreements]);
+  const onChangeInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    console.log(name, value);
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+  };
 
   return (
     <div>
       <Title>크라우드 워커에 지원하기 위해 필요한 정보를 입력해 주세요</Title>
-      {inputAttrs.map(
-        ({
-          name,
-          title,
-          description,
-          placeholder,
-          reg,
-          maxLength,
-          regWhiteList,
-          validationBorder,
-          Component,
-          GenderComponent,
-          TransportationComponent,
-        }) => {
-          if (name === 'gender' && GenderComponent) {
-            return (
-              <GenderComponent
-                key={name}
-                title={title}
-                onChange={handleChangeGender}
-              />
-            );
-          }
 
-          if (name === 'transportation' && TransportationComponent) {
-            return (
-              <TransportationComponent
-                key={name}
-                title={title}
-                description={description}
-                name={name}
-              />
-            );
-          }
-          return (
-            Component && (
-              <Component
-                key={name}
-                title={title}
-                name={name}
-                placeholder={placeholder}
-                reg={reg}
-                maxLength={maxLength}
-                {...(name === 'email' && { regWhiteList, validationBorder })}
-                {...(name === 'region' && {
-                  readOnly: true,
-                  onClick: handleClickedRegion,
-                  value: district && !showModal ? `${city} ${district}` : '',
-                })}
-              />
-            )
-          );
-        }
-      )}
+      <Label title="이름" />
+      <Input
+        reg={REGEX_FOR_VALIDATION.NAME}
+        name="name"
+        placeholder="홍길동 (한글만 입력 가능)"
+        value={inputs.name}
+        onChangeInputs={onChangeInputs}
+      />
+
+      <Label title="생년월일" />
+      <Input
+        reg={REGEX_FOR_VALIDATION.BIRTH}
+        name="birth"
+        placeholder="YYYY.MM.DD"
+        value={inputs.birth}
+        onChangeInputs={onChangeInputs}
+      />
+
+      <Label title="연락처" />
+      <Input
+        reg={REGEX_FOR_VALIDATION.PHONE}
+        name="phone"
+        placeholder="'-'없이 입력해 주세요"
+        value={inputs.phone}
+        onChangeInputs={onChangeInputs}
+      />
+
+      <Label title="이메일" />
+      <Input
+        reg={REGEX_FOR_VALIDATION.EMAIL}
+        name="email"
+        placeholder="MYD@snplab.com"
+        type="email"
+        value={inputs.email}
+        onChangeInputs={onChangeInputs}
+      />
 
       <AllAgreeRadio
         name="agreement"

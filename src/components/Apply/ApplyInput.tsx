@@ -2,10 +2,11 @@ import React from 'react';
 import { Label, Input } from '@/components';
 import styled from 'styled-components';
 import { REGEX_FOR_VALIDATION } from '@/constants/validation';
+import { InputNameType } from '@/@types/enum';
 
 interface ApplyInputProps {
   title: string;
-  name: string;
+  name: InputNameType;
   placeholder: string;
   reg?: RegExp;
   regWhiteList?: boolean;

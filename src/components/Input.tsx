@@ -9,30 +9,35 @@ import { applicantInfoState, applicantValidationState } from '@/recoil/atoms';
 import styled from 'styled-components';
 import { ChangeEventType } from '@/@types/react';
 
+interface InputsInterface {
+  name: string;
+  birth: string;
+  phone: string;
+  email: string;
+}
+
 interface InputProps {
-  name?: string;
+  name?: InputNameType;
   type?: string;
   reg?: RegExp;
   regWhiteList?: boolean;
   placeholder?: string;
   value?: string;
-  height?: string;
-  width?: string;
   validationBorder?: boolean;
   maxLength?: number;
   onClick?: (event: React.MouseEvent<HTMLInputElement>) => void;
+  onChangeInputs?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
-
-const DEFAULT_HEIGHT = '30px';
-const DEFAULT_WIDTH = '100%';
 
 const Input = ({
   reg = new RegExp(''),
   regWhiteList = false,
   validationBorder = false,
-  height = DEFAULT_HEIGHT,
-  width = DEFAULT_WIDTH,
-  ...otherProps
+  placeholder,
+  value,
+  type,
+  onChangeInputs,
+  name,
 }: InputProps) => {
   const [isValid, setIsValid] = useState<boolean>(true);
   const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
@@ -68,16 +73,6 @@ const Input = ({
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.currentTarget;
-    if (reg === undefined) return;
-    if (!handleValidationCheck(event)) {
-      if (name === InputNameEnum.EMAIL) {
-        setApplicantValidation((prev) => ({
-          ...prev,
-          [name]: false,
-        }));
-        return;
-      }
-    }
 
     if (name === InputNameEnum.BIRTH || name === InputNameEnum.PHONE) {
       makeAutoFormat(event, name);
@@ -91,11 +86,13 @@ const Input = ({
   return (
     <div>
       <StyledInput
-        {...otherProps}
-        height={height}
-        width={width}
-        onChange={handleChangeValue}
+        name={name}
+        onChange={onChangeInputs}
         validationBorder={isValid}
+        placeholder={placeholder}
+        type={type || 'text'}
+        value={value || ''}
+        /* value={value || ''} */
         /* value={value ? value : applicantInfo[name]} */
       />
     </div>
@@ -103,15 +100,14 @@ const Input = ({
 };
 
 const StyledInput = styled.input<{
-  height: string;
-  width: string;
   validationBorder: boolean;
 }>`
   border-bottom: 1px solid
     ${({ theme, validationBorder }) =>
       validationBorder ? theme.color.border.lightgray : theme.color.border.red};
-  height: ${({ height }) => `${height}`};
-  width: ${({ width }) => `${width}`};
+
+  width: 100%;
+  height: 30px;
   margin-bottom: 30px;
 
   ::placeholder {
