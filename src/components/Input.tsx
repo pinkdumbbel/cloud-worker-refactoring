@@ -38,6 +38,7 @@ const Input = ({
   type,
   onChangeInputs,
   name,
+  maxLength,
 }: InputProps) => {
   const [isValid, setIsValid] = useState<boolean>(true);
   const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
@@ -91,7 +92,8 @@ const Input = ({
         validationBorder={isValid}
         placeholder={placeholder}
         type={type || 'text'}
-        value={value || ''}
+        value={value}
+        maxLength={maxLength}
         /* value={value || ''} */
         /* value={value ? value : applicantInfo[name]} */
       />

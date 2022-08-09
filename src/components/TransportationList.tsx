@@ -6,6 +6,7 @@ import {
   Transportations,
   TransportationType,
   ButtonTypeEnum,
+  InputNameType,
 } from '@/@types/enum';
 
 import { useRecoilState } from 'recoil';
@@ -13,14 +14,14 @@ import { applicantInfoState, applicantValidationState } from '@/recoil/atoms';
 
 interface TransportationListProps {
   className?: string;
-  name: string;
+  name: InputNameType;
 }
 
 const TransportationList = ({ className, name }: TransportationListProps) => {
   const { selectedList, onToggleButton } = useToggleButton<TransportationType>(
     ButtonTypeEnum.MULTIPLE
   );
-  const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
+  /* const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
   const [applicantValidation, setApplicantValidation] = useRecoilState(
     applicantValidationState
   );
@@ -29,7 +30,7 @@ const TransportationList = ({ className, name }: TransportationListProps) => {
     selectedList.length > 0
       ? setApplicantValidation({ ...applicantValidation, [name]: true })
       : setApplicantValidation({ ...applicantValidation, [name]: false });
-  }, [selectedList]);
+  }, [selectedList]); */
 
   return (
     <Wrapper className={className}>
@@ -51,4 +52,5 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 30px;
 `;

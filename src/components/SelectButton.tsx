@@ -4,9 +4,10 @@ import { Checked } from '@/assets/icons';
 import { ChangeEventType } from '@/@types/react';
 import { useRecoilState } from 'recoil';
 import { applicantInfoState } from '@/recoil/atoms';
+import { InputNameType } from '@/@types/enum';
 
 interface RadioProps {
-  name: string; //버튼 그룹. ex)성별 gender
+  name?: InputNameType; //버튼 그룹. ex)성별 gender
   labels: string[]; //표면적 이름 ex)남자 or 여자
   values: string[]; //데이터값 ex) male or female
   className?: string;
@@ -29,7 +30,7 @@ const SelectButton = ({
       {labels.map((label, index) => (
         <RadioGroup key={index}>
           <input
-            type={type}
+            type="radio"
             name={name}
             id={values[index]}
             value={values[index]}
@@ -52,7 +53,7 @@ const Wrapper = styled.div`
   ${({ theme }) => theme.mixins.flexBox('center', 'flex-start')};
   width: 100%;
   margin-top: 8px;
-  padding: 10px;
+  margin-bottom: 30px;
 `;
 const RadioGroup = styled.div`
   display: flex;

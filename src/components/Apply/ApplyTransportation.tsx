@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TransportationList, Label } from '@/components';
+import { InputNameType } from '@/@types/enum';
 
 interface ApplyTransportationProps {
   title: string;
   description: string;
-  name: string;
+  name: InputNameType;
 }
 const ApplyTransportation = ({
   title,

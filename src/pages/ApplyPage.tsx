@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, RoundButton, RegionModal, Label, Input } from '@/components';
+import {
+  Checkbox,
+  RoundButton,
+  RegionModal,
+  Label,
+  Input,
+  TransportationList,
+} from '@/components';
 import { useNavigate } from 'react-router-dom';
 
 import { ChangeEventType } from '@/@types/react';
@@ -18,7 +25,12 @@ import { CHECKBOX_LABEL_TEXT } from '@/constants';
 import { UserInterface } from 'request';
 import formatDate from '@/utils/formatDate';
 import useApplyUserModel from '@/api/models/useApplyUserModel';
-import { ContentType, ContentTypeEnum, InputNameEnum } from '@/@types/enum';
+import {
+  ContentType,
+  ContentTypeEnum,
+  InputNameEnum,
+  InputNameType,
+} from '@/@types/enum';
 import moveScroll from '@/utils/moveScroll';
 import Agreement from '@/components/Modal/Agreement';
 import { REGEX_FOR_VALIDATION } from '@/constants/validation';
@@ -44,6 +56,8 @@ const ApplyPage = () => {
     phone: '',
     email: '',
   });
+
+  const [emailValidation, setEmailValidation] = useState(true);
 
   const handleClickedRegion = () => {
     setShowModal(true);
@@ -89,10 +103,33 @@ const ApplyPage = () => {
     setIsAgreement(false);
   };
 
+  const getFormattedString = (inputName: InputNameType, value: string) => {
+    switch (inputName) {
+      case InputNameEnum.BIRTH:
+        return value
+          .replace(/^(\d{0,4})(\d{0,2})(\d{0,2})$/g, '$1.$2.$3')
+          .replace(/\.{1,2}$/g, '');
+
+      case InputNameEnum.PHONE:
+        return value
+          .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3')
+          .replace(/\-{1,2}$/g, '');
+    }
+  };
+
+  const checkValidation = (inputName: InputNameType, value: string) => {
+    if (inputName === InputNameEnum.EMAIL) return value;
+
+    return value.replace(REGEX_FOR_VALIDATION[inputName.toUpperCase()], '');
+  };
+
   const onChangeInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log(name, value);
-    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+    const inputName = name as InputNameType;
+    setInputs((prevInputs) => ({
+      ...prevInputs,
+      [name]: getFormattedString(inputName, checkValidation(inputName, value)),
+    }));
   };
 
   return (
@@ -108,6 +145,14 @@ const ApplyPage = () => {
         onChangeInputs={onChangeInputs}
       />
 
+      <Label title="성별" />
+      <SelectButton
+        name="gender"
+        labels={['여자', '남자']}
+        onChange={onChangeInputs}
+        values={['F', 'M']}
+      />
+
       <Label title="생년월일" />
       <Input
         reg={REGEX_FOR_VALIDATION.BIRTH}
@@ -115,7 +160,11 @@ const ApplyPage = () => {
         placeholder="YYYY.MM.DD"
         value={inputs.birth}
         onChangeInputs={onChangeInputs}
+        maxLength={10}
       />
+
+      <Label title="거주지역" />
+      <Input name="birth" placeholder="거주지역 선택" />
 
       <Label title="연락처" />
       <Input
@@ -124,6 +173,7 @@ const ApplyPage = () => {
         placeholder="'-'없이 입력해 주세요"
         value={inputs.phone}
         onChangeInputs={onChangeInputs}
+        maxLength={13}
       />
 
       <Label title="이메일" />
@@ -136,8 +186,10 @@ const ApplyPage = () => {
         onChangeInputs={onChangeInputs}
       />
 
+      <Label title="주로 이용하는 교통수단" />
+      <TransportationList name="transportation" />
+
       <AllAgreeRadio
-        name="agreement"
         labels={['이용약관 모두 동의']}
         values={['yes']}
         type="checkbox"
