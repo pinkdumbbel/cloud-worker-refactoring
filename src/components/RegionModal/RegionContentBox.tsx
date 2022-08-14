@@ -2,34 +2,27 @@ import React from 'react';
 import { Close } from '@/assets/icons';
 import styled from 'styled-components';
 import TouchScroll from './TouchScroll';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import {
   applicantInfoState,
   modalTriggerState,
   applicantValidationState,
+  applicantRegionState,
 } from '@/recoil/atoms';
-import { UserInterface } from 'request';
+import { UserInterface, UserRegionInterface } from 'request';
 import { DEFAULT_SELECTED_CITY } from '@/constants';
 const RegionContentBox = () => {
-  const [applicantInfo, setApplicantInfo] =
-    useRecoilState<UserInterface>(applicantInfoState);
+  const [applicantRegion, setApplicantRegion] =
+    useRecoilState<UserRegionInterface>(applicantRegionState);
   const setShowModal = useSetRecoilState<boolean>(modalTriggerState);
-  const setApplicantValidation = useSetRecoilState(applicantValidationState);
 
-  const disabled = !(
-    applicantInfo.region.city && applicantInfo.region.district
-  );
+  const disabled = !(applicantRegion.city && applicantRegion.district);
 
   const onCloseModal = (buttonType: 'close' | 'confirm') => {
     setShowModal(false);
 
     if (buttonType === 'close') {
-      setApplicantInfo({
-        ...applicantInfo,
-        region: { city: DEFAULT_SELECTED_CITY, district: '' },
-      });
-    } else {
-      setApplicantValidation((prev) => ({ ...prev, region: true }));
+      useResetRecoilState(applicantRegionState);
     }
   };
 

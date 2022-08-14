@@ -9,28 +9,22 @@ import {
   InputNameType,
 } from '@/@types/enum';
 
-import { useRecoilState } from 'recoil';
-import { applicantInfoState, applicantValidationState } from '@/recoil/atoms';
-
 interface TransportationListProps {
   className?: string;
   name: InputNameType;
+  onClickTransportation?: (
+    event: React.MouseEvent<HTMLButtonElement>,
+    transportation: TransportationType
+  ) => void;
+  transportationList?: TransportationType[];
 }
 
-const TransportationList = ({ className, name }: TransportationListProps) => {
-  const { selectedList, onToggleButton } = useToggleButton<TransportationType>(
-    ButtonTypeEnum.MULTIPLE
-  );
-  /* const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
-  const [applicantValidation, setApplicantValidation] = useRecoilState(
-    applicantValidationState
-  );
-  useEffect(() => {
-    setApplicantInfo({ ...applicantInfo, transportation: selectedList });
-    selectedList.length > 0
-      ? setApplicantValidation({ ...applicantValidation, [name]: true })
-      : setApplicantValidation({ ...applicantValidation, [name]: false });
-  }, [selectedList]); */
+const TransportationList = ({
+  className,
+  onClickTransportation,
+  transportationList,
+}: TransportationListProps) => {
+  if (!transportationList || !onClickTransportation) return null;
 
   return (
     <Wrapper className={className}>
@@ -38,8 +32,10 @@ const TransportationList = ({ className, name }: TransportationListProps) => {
         <RoundButton
           key={index}
           showText={transportation}
-          isClicked={selectedList.includes(transportation)}
-          onClick={() => onToggleButton(transportation)}
+          isClicked={transportationList.includes(transportation)}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+            onClickTransportation(event, transportation)
+          }
         />
       ))}
     </Wrapper>

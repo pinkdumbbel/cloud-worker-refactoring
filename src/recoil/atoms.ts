@@ -1,19 +1,24 @@
+import { InputNameEnum, InputNameType } from '@/@types/enum';
 import { DEFAULT_SELECTED_CITY } from '@/constants';
 import { atom } from 'recoil';
-import { UserInterface } from 'request';
-export const applicantInfoState = atom<UserInterface>({
+import { UserInputInterface, UserRegionInterface } from 'request';
+export const applicantInfoState = atom<UserInputInterface>({
   key: 'applicantInfoState',
   default: {
-    id: 0,
-    name: 'name',
-    gender: 'F',
-    applyDate: '',
+    name: '',
+    gender: '',
     birth: '',
-    region: { city: DEFAULT_SELECTED_CITY, district: '' },
     phone: '',
     email: '',
     transportation: [],
-    isWinning: false,
+  },
+});
+
+export const applicantRegionState = atom<UserRegionInterface>({
+  key: 'applicantRegionState',
+  default: {
+    city: DEFAULT_SELECTED_CITY,
+    district: '',
   },
 });
 
@@ -22,7 +27,19 @@ export const modalTriggerState = atom<boolean>({
   default: false,
 });
 
-export const applicantValidationState = atom<{ [key: string]: boolean }>({
+interface ApplicatValidation {
+  name: boolean;
+  birth: boolean;
+  phone: boolean;
+  email: boolean;
+}
+
+export const applicantValidationState = atom<ApplicatValidation>({
   key: 'applicantValidation',
-  default: {},
+  default: {
+    name: true,
+    birth: true,
+    phone: true,
+    email: true,
+  },
 });

@@ -12,7 +12,7 @@ interface RadioProps {
   values: string[]; //데이터값 ex) male or female
   className?: string;
   type?: string;
-  onChange: (event: ChangeEventType<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEventType<HTMLInputElement>) => void;
   checked?: boolean;
 }
 
@@ -30,7 +30,7 @@ const SelectButton = ({
       {labels.map((label, index) => (
         <RadioGroup key={index}>
           <input
-            type="radio"
+            type={type}
             name={name}
             id={values[index]}
             value={values[index]}

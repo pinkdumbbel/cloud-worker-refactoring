@@ -5,23 +5,23 @@ import styled from 'styled-components';
 import Loading from '../Loading';
 
 import { useRecoilState } from 'recoil';
-import { applicantInfoState } from '@/recoil/atoms';
+import { applicantRegionState } from '@/recoil/atoms';
 
 const TouchScroll = () => {
   const { regions, getRegionData } = useRegionModel();
-  const [applicantInfo, setApplicantInfo] = useRecoilState(applicantInfoState);
-  const { region } = applicantInfo;
+  const [applicantRegion, setApplicantRegion] =
+    useRecoilState(applicantRegionState);
 
   const onClickCity = (city: string) => {
-    if (region.city === city) return;
+    if (applicantRegion.city === city) return;
 
-    setApplicantInfo({ ...applicantInfo, region: { city, district: '' } });
+    setApplicantRegion((prevRegion) => ({ ...prevRegion, city }));
   };
 
   const onClickDistrict = (district: string) => {
-    if (region.district === district) return;
+    if (applicantRegion.district === district) return;
 
-    setApplicantInfo({ ...applicantInfo, region: { ...region, district } });
+    setApplicantRegion((prevRegion) => ({ ...prevRegion, district }));
   };
 
   useEffect(() => {
@@ -37,18 +37,18 @@ const TouchScroll = () => {
           <ScrollItem
             key={city}
             onClick={() => onClickCity(city)}
-            isActive={city === region.city}
+            isActive={city === applicantRegion.city}
           >
             <ScrollItemTitle>{city}</ScrollItemTitle>
           </ScrollItem>
         ))}
       </ScrollWrapper>
       <ScrollWrapper>
-        {regions[region.city].map((district) => (
+        {regions[applicantRegion.city].map((district) => (
           <ScrollItem
             key={district}
             onClick={() => onClickDistrict(district)}
-            isActive={region.district === district}
+            isActive={applicantRegion.district === district}
           >
             <ScrollItemTitle>{district}</ScrollItemTitle>
           </ScrollItem>

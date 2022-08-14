@@ -12,6 +12,7 @@ export const InputNameEnum = {
   PHONE: 'phone',
   EMAIL: 'email',
   TRANSPORTATION: 'transportation',
+  AGREEMENT: 'agreement',
 } as const;
 
 export const Transportations = [
@@ -29,6 +30,7 @@ export const AdminColumns = {
   name: '지원자명',
   gender: '성별',
   applyDate: '지원날짜',
+  phone: '전화번호',
   birth: '생년월일',
   transportation: '이용수단',
   region: '거주지',
@@ -53,6 +55,11 @@ export type TransportationType = typeof Transportations[number];
 
 export type ApiUrlType = typeof ApiUrlEnum[keyof typeof ApiUrlEnum];
 export type InputNameType = typeof InputNameEnum[keyof typeof InputNameEnum];
+export type InputNameOmitKeyType = keyof Omit<
+  typeof InputNameEnum,
+  'REGION' | 'GENDER' | 'TRANSPORTATION' | 'AGREEMENT'
+>;
+
 export type TitleType = typeof TitleIconEnum[keyof typeof TitleIconEnum];
 export type ButtonType = typeof ButtonTypeEnum[keyof typeof ButtonTypeEnum];
 export type ContentType = typeof ContentTypeEnum[keyof typeof ContentTypeEnum];

@@ -20,6 +20,6 @@ export const getFormattedString = {
 
 export const formatString = (value: string, type: InputNameType) => {
   let formattedValue = '';
-  formattedValue = getFormattedString[type](value);
+  /* formattedValue = getFormattedString[type](value); */
   return formattedValue;
 };
